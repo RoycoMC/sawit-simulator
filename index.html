@@ -1,16 +1,72 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>SAWIT SIMULATOR</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAWIT SIMULATOR 2.5D</title>
 <style>
-:root{--green:#246b36;--lime:#7ed957;--gold:#ffc857;--dark:#173321}*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial,sans-serif;background:linear-gradient(#9edcff 0 35%,#7bbd53 35% 100%);color:#142719;min-height:100vh}.top{background:#174b2a;color:white;padding:14px 16px;text-align:center;box-shadow:0 3px 8px #0003}.top h1{font-size:22px;margin:0}.top p{margin:3px 0 0;font-size:12px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:10px}.stat,.panel{background:#ffffffed;border:2px solid #d6e9d1;border-radius:12px;padding:10px;box-shadow:0 3px 8px #0002}.stat small{display:block;color:#54705a;font-size:11px}.stat strong{font-size:16px}.field{margin:0 10px 10px;background:#8fce62;border:3px solid #4d8e3c;border-radius:14px;padding:12px;min-height:260px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px;align-content:start}.tree{border:2px solid #579448;border-radius:12px;background:#c6ef9d;min-height:105px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:5px;color:#173321;font-weight:700}.tree .emoji{font-size:38px;line-height:1}.tree small{font-size:10px;font-weight:600}.tree:active,button:active{transform:scale(.97)}.panel{margin:0 10px 10px}.panel h2{font-size:16px;margin:0 0 8px}.buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}button{border:0;border-radius:10px;padding:12px 8px;font-size:14px;font-weight:800;background:var(--green);color:white;box-shadow:0 3px 0 #123e22;cursor:pointer}button.gold{background:#e7a923;color:#302308;box-shadow:0 3px 0 #a56d0a}button.blue{background:#2875a6;box-shadow:0 3px 0 #174866}.hint{font-size:12px;color:#526753;margin:8px 0 0}.log{font-size:12px;min-height:18px;color:#285536}.footer{text-align:center;font-size:11px;padding:4px 12px 16px;color:#254b2c}@media(min-width:600px){main{max-width:600px;margin:auto}.field{min-height:300px}}
-</style></head><body>
-<header class="top"><h1>🌴 SAWIT SIMULATOR</h1><p>Bangun kebun sawitmu sendiri!</p></header><main>
-<section class="stats"><div class="stat"><small>💵 UANG</small><strong id="money">Rp100.000</strong></div><div class="stat"><small>🌴 POHON</small><strong id="count">3</strong></div><div class="stat"><small>🧺 TANDAN</small><strong id="fruit">0</strong></div></section>
-<div class="field" id="field" aria-label="Kebun sawit"></div>
-<section class="panel"><h2>🛠️ Aksi Kebun</h2><div class="buttons"><button id="harvest">🧺 Panen semua</button><button class="gold" id="sell">💰 Jual tandan</button><button class="blue" id="land">🗺️ Beli lahan — Rp500.000</button><button id="seed">🌱 Beli bibit — Rp1.000</button><button class="gold" id="fert">🧪 Pupuk — Rp50.000</button><button class="blue" id="tractor">🚜 Traktor: OFF</button></div><p class="hint">Ketuk pohon yang siap panen. Pohon tumbuh kembali dalam 30 detik.</p><p class="log" id="log">Selamat datang! Panen sawit untuk mulai mencari uang.</p></section>
-</main><div class="footer">Versi uji coba offline • Progres tersimpan otomatis di browser</div>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#8fca69;color:white;overflow:hidden}
+header{background:#205b2c;padding:12px;display:flex;justify-content:space-between;font-weight:bold}
+#scene{height:65vh;position:relative;overflow:hidden;background:linear-gradient(#8ed4ed 0 35%,#70ad4b 35%)}
+.ground{position:absolute;left:-20%;top:38%;width:140%;height:90%;background:repeating-linear-gradient(30deg,#8bc65e 0 40px,#79b64f 41px 43px);transform:perspective(400px) rotateX(12deg)}
+.tree{position:absolute;width:100px;height:140px;transform:translate(-50%,-50%)}
+.trunk{position:absolute;bottom:0;left:44px;width:13px;height:80px;background:#88542d;transform:skew(-5deg)}
+.leaves{position:absolute;left:48px;top:5px;width:8px;height:85px;background:#24612b;transform-origin:bottom;box-shadow:0 0 0 0 #24612b}
+.leaves:before,.leaves:after{content:"";position:absolute;width:72px;height:12px;background:#347e32;border-radius:100%;left:-65px;top:10px;transform:rotate(-28deg)}
+.leaves:after{left:0;top:0;transform:rotate(28deg)}
+.fruit{position:absolute;top:62px;left:42px;color:#ff681d;font-size:22px}
+#player{position:absolute;left:50%;top:65%;font-size:30px;transform:translate(-50%,-50%)}
+#controls{padding:10px;background:#e5edcf;color:#173b20;height:35vh;overflow:auto}
+.row{display:flex;justify-content:center;gap:7px;margin:7px}
+button{border:0;border-radius:10px;padding:12px;background:#246b36;color:white;font-weight:bold}
+.move{width:55px;font-size:20px}
+.actions button{flex:1;font-size:12px}
+#msg{text-align:center;font-weight:bold;min-height:20px}
+</style>
+</head>
+<body>
+<header><span>🌴 SAWIT SIMULATOR 2.5D</span><span id="money">Rp100K</span></header>
+<div id="scene">
+<div class="ground"></div>
+<div class="tree" style="left:25%;top:45%"><div class="trunk"></div><div class="leaves"></div><div class="fruit">🟠</div></div>
+<div class="tree" style="left:72%;top:42%;transform:translate(-50%,-50%) scale(.8)"><div class="trunk"></div><div class="leaves"></div><div class="fruit">🟠</div></div>
+<div class="tree" style="left:32%;top:72%;transform:translate(-50%,-50%) scale(.7)"><div class="trunk"></div><div class="leaves"></div><div class="fruit">🟠</div></div>
+<div id="player">🧑🏻‍🌾</div>
+</div>
+<div id="controls">
+<div id="msg">Jalan-jalan di kebun dan panen sawit!</div>
+<div class="row">
+<button class="move" onclick="move(0,-20)">⬆️</button>
+</div>
+<div class="row">
+<button class="move" onclick="move(-20,0)">⬅️</button>
+<button class="move" onclick="move(0,20)">⬇️</button>
+<button class="move" onclick="move(20,0)">➡️</button>
+</div>
+<div class="row actions">
+<button onclick="harvest()">🌴 PANEN</button>
+<button onclick="sell()">💰 JUAL</button>
+</div>
+<div class="row actions">
+<button onclick="buyLand()">🟩 BELI LAHAN 500K</button>
+<button onclick="plant()">🌱 BIBIT 1K</button>
+<button onclick="fertilize()">🧪 PUPUK 50K</button>
+</div>
+</div>
 <script>
-(()=>{const $=id=>document.getElementById(id);let saved;try{saved=JSON.parse(localStorage.getItem('sawitSaveV2')||'null')}catch(e){};let state=saved||{money:100000,trees:[{ready:true},{ready:true},{ready:true}],fruit:0,land:1,tractor:false};const fmt=n=>'Rp'+Math.floor(n).toLocaleString('id-ID');function save(){try{localStorage.setItem('sawitSaveV2',JSON.stringify(state))}catch(e){}}function log(t){$('log').textContent=t}function render(){ $('money').textContent=fmt(state.money);$('count').textContent=state.trees.length;$('fruit').textContent=state.fruit;$('tractor').textContent='🚜 Traktor: '+(state.tractor?'ON':'OFF');const f=$('field');f.innerHTML='';state.trees.forEach((t,i)=>{const b=document.createElement('button');b.className='tree';b.style.background=t.ready?'#c6ef9d':'#e5e9c7';b.innerHTML='<span class="emoji">'+(t.ready?'🌴':'🌱')+'</span><span>Pohon '+(i+1)+'</span><small>'+(t.ready?'SIAP PANEN':'TUMBUH...')+'</small>';b.onclick=()=>harvestOne(i);f.appendChild(b)});save()}function harvestOne(i){let t=state.trees[i];if(!t.ready){log('Pohon ini belum siap. Tunggu sampai tumbuh kembali!');return}t.ready=false;state.fruit+=1;log('Berhasil panen 1 tandan! Pohon tumbuh lagi dalam 30 detik.');render();setTimeout(()=>{if(state.trees[i]){state.trees[i].ready=true;render();log('Pohon '+(i+1)+' sudah tumbuh kembali!')}},30000)}$('harvest').onclick=()=>{let n=0;state.trees.forEach((t,i)=>{if(t.ready){t.ready=false;state.fruit++;n++;setTimeout(()=>{if(state.trees[i]){state.trees[i].ready=true;render()}},30000)} });render();log(n?'Panen '+n+' tandan berhasil!':'Belum ada pohon yang siap dipanen.');};$('sell').onclick=()=>{if(!state.fruit){log('Belum ada tandan untuk dijual. Panen dulu!');return}let n=state.fruit;state.money+=n*25000;state.fruit=0;render();log('Terjual '+n+' tandan, kamu mendapat '+fmt(n*25000)+'!')};$('land').onclick=()=>{if(state.money<500000){log('Uang belum cukup untuk beli lahan (Rp500.000).');return}state.money-=500000;state.land++;for(let i=0;i<3;i++)state.trees.push({ready:false});render();log('Lahan baru dibeli! 3 bibit pohon ditanam.');state.trees.slice(-3).forEach((t,j)=>setTimeout(()=>{t.ready=true;render()},15000+j*3000))};$('seed').onclick=()=>{if(state.money<1000){log('Uang belum cukup untuk bibit.');return}state.money-=1000;state.trees.push({ready:false});let idx=state.trees.length-1;render();log('Bibit ditanam! Siap panen dalam 15 detik.');setTimeout(()=>{if(state.trees[idx]){state.trees[idx].ready=true;render();log('Bibit baru siap dipanen!')}},15000)};$('fert').onclick=()=>{if(state.money<50000){log('Uang belum cukup untuk membeli pupuk (Rp50.000).');return}state.money-=50000;state.trees.forEach(t=>t.ready=true);render();log('Pupuk digunakan! Semua pohon langsung siap panen.')};$('tractor').onclick=()=>{state.tractor=!state.tractor;render();log(state.tractor?'Traktor aktif! (fitur visual uji coba)':'Traktor dimatikan.')};render()})();
-</script></body></html>
+let money=100000,fruit=0,trees=3,x=50,y=65;
+const player=document.getElementById('player');
+function update(){document.getElementById('money').textContent='Rp'+Math.floor(money/1000)+'K'}
+function say(t){document.getElementById('msg').textContent=t}
+function move(a,b){x=Math.max(5,Math.min(95,x+a));y=Math.max(10,Math.min(90,y+b));player.style.left=x+'%';player.style.top=y+'%'}
+function harvest(){fruit++;say('Panen berhasil! Tandan: '+fruit)}
+function sell(){if(!fruit){say('Belum ada sawit untuk dijual!');return}money+=fruit*25000;say('Sawit terjual! +Rp'+(fruit*25)+'K');fruit=0;update()}
+function buyLand(){if(money<500000){say('Uang belum cukup! Butuh Rp500K');return}money-=500000;trees++;let t=document.createElement('div');t.className='tree';t.style.left=(15+Math.random()*70)+'%';t.style.top=(40+Math.random()*35)+'%';t.innerHTML='<div class="trunk"></div><div class="leaves"></div><div class="fruit">🟠</div>';document.getElementById('scene').appendChild(t);update();say('Lahan baru dibeli!')}
+function plant(){if(money<1000){say('Uang kurang!');return}money-=1000;trees++;let t=document.createElement('div');t.className='tree';t.style.left=(10+Math.random()*80)+'%';t.style.top=(40+Math.random()*40)+'%';t.innerHTML='<div class="trunk"></div><div class="leaves"></div>';document.getElementById('scene').appendChild(t);update();say('Bibit ditanam!');setTimeout(()=>{t.innerHTML='<div class="trunk"></div><div class="leaves"></div><div class="fruit">🟠</div>';say('Pohon siap dipanen!')},8000)}
+function fertilize(){if(money<50000){say('Uang kurang! Butuh Rp50K');return}money-=50000;update();say('Pupuk diberikan ke kebun!')}
+update();
+</script>
+</body>
+  </html>
